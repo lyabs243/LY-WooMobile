@@ -20,3 +20,19 @@
  * You should have received a copy of the GNU General Public License
  * along with Woo Mobile. If not, see https://www.gnu.org/licenses/gpl-3.0.fr.html.
  */
+
+/**
+ * add api key to database
+ */
+function lywoomo_add_option_apikey() {
+	$apikey = 'YOUR API KEY';
+	add_option('lywoomo_api_key', $apikey);
+}
+
+/**
+ * Register function call on plugin activated
+ */
+function lywoomo_activate() {
+	lywoomo_add_option_apikey();
+}
+register_activation_hook(__FILE__, 'lywoomo_activate');
