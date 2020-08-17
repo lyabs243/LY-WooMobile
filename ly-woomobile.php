@@ -21,11 +21,14 @@
  * along with Woo Mobile. If not, see https://www.gnu.org/licenses/gpl-3.0.fr.html.
  */
 
+include_once 'includes/lywoomo_posts.php';
+include_once 'includes/lywoomo_categories.php';
+
 /**
  * add api key to database
  */
 function lywoomo_add_option_apikey() {
-	$apikey = 'YOUR API KEY';
+	$apikey = '6abJACvxcu87EZ1ODhkL';
 	add_option('lywoomo_api_key', $apikey);
 }
 
