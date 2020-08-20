@@ -99,7 +99,7 @@ function lywoomo_search_posts() {
 		);
 
 		foreach ($results as $post) {
-			$item['ID'] = $post->ID;
+			$item['ID'] = (int)$post->ID;
 			$item['post_date_gmt'] = $post->post_date_gmt;
 			$item['post_content'] = $post->post_content;
 			$item['post_title'] = $post->post_title;
