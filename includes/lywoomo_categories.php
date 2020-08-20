@@ -28,6 +28,6 @@ function lywoomo_get_categories() {
 			);
 		}
 	}
-	return $categories;
+	return array('data' => $categories);
 }
 

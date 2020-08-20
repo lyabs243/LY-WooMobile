@@ -57,7 +57,7 @@ function lywoomo_get_posts() {
 		$posts[] = $item;
 	}
 
-	return $posts;
+	return array('data' => $posts);
 }
 
 add_action('rest_api_init', function(){
@@ -122,5 +122,5 @@ function lywoomo_search_posts() {
 			$posts[] = $item;
 		}
 	}
-	return $posts;
+	return array('data' => $posts);
 }
