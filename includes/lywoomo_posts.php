@@ -90,6 +90,7 @@ function lywoomo_search_posts() {
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}posts
  					WHERE LOWER(post_content) LIKE %s
+ 					AND post_type = 'post'
  					ORDER BY post_date_gmt DESC
  					LIMIT %d , %d",
 				"%$query%",
