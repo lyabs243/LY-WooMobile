@@ -90,7 +90,7 @@ function lywoomo_init_post($post) {
 
 	$item['ID'] = (int)$post->ID;
 	$item['post_date_gmt'] = $post->post_date_gmt;
-	$item['post_content'] = $post->post_content;
+	$item['post_content'] = substr(strip_tags($post->post_content), 0, 100);
 	$item['post_title'] = $post->post_title;
 	$item['permalink'] = get_permalink($post->ID);
 	$item['thumbnail'] = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
