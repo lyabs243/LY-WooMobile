@@ -34,27 +34,7 @@ function lywoomo_get_posts() {
 
 	//init of all posts
 	foreach ($allposts as $post) {
-		$item['ID'] = $post->ID;
-		$item['post_date_gmt'] = $post->post_date_gmt;
-		$item['post_content'] = $post->post_content;
-		$item['post_title'] = $post->post_title;
-		$item['permalink'] = get_permalink($post->ID);
-		$item['thumbnail'] = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
-
-		$categories = array();
-		$categoriesIds = wp_get_post_categories($post->ID);
-		foreach ($categoriesIds as $id) {
-			$category = get_category($id);
-			$categories[] = array(
-				'name' => $category->name,
-				'slug' => $category->slug,
-				'description' => $category->description,
-				'cat_ID' => $category->cat_ID,
-			);
-		}
-		$item['categories'] = $categories;
-
-		$posts[] = $item;
+		$posts[] = lywoomo_init_post($post);
 	}
 
 	return array('data' => $posts);
@@ -100,28 +80,33 @@ function lywoomo_search_posts() {
 		);
 
 		foreach ($results as $post) {
-			$item['ID'] = (int)$post->ID;
-			$item['post_date_gmt'] = $post->post_date_gmt;
-			$item['post_content'] = $post->post_content;
-			$item['post_title'] = $post->post_title;
-			$item['permalink'] = get_permalink($post->ID);
-			$item['thumbnail'] = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
-
-			$categories = array();
-			$categoriesIds = wp_get_post_categories($post->ID);
-			foreach ($categoriesIds as $id) {
-				$category = get_category($id);
-				$categories[] = array(
-					'name' => $category->name,
-					'slug' => $category->slug,
-					'description' => $category->description,
-					'cat_ID' => $category->cat_ID,
-				);
-			}
-			$item['categories'] = $categories;
-
-			$posts[] = $item;
+			$posts[] = lywoomo_init_post($post);
 		}
 	}
 	return array('data' => $posts);
+}
+
+function lywoomo_init_post($post) {
+
+	$item['ID'] = (int)$post->ID;
+	$item['post_date_gmt'] = $post->post_date_gmt;
+	$item['post_content'] = $post->post_content;
+	$item['post_title'] = $post->post_title;
+	$item['permalink'] = get_permalink($post->ID);
+	$item['thumbnail'] = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
+
+	$categories = array();
+	$categoriesIds = wp_get_post_categories($post->ID);
+	foreach ($categoriesIds as $id) {
+		$category = get_category($id);
+		$categories[] = array(
+			'name' => $category->name,
+			'slug' => $category->slug,
+			'description' => $category->description,
+			'cat_ID' => $category->cat_ID,
+		);
+	}
+	$item['categories'] = $categories;
+
+	return $item;
 }
