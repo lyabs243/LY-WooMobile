@@ -41,6 +41,24 @@ function lywoomo_get_posts() {
 }
 
 add_action('rest_api_init', function(){
+	register_rest_route( 'lywoomo/v1', '/post/', array(
+		'methods' => 'POST',
+		'callback' => 'lywoomo_get_post',
+	));
+});
+
+function lywoomo_get_post() {
+	$post = null;
+
+	$apikey = get_option('lywoomo_api_key');
+	if (isset($_POST['api_key']) && $_POST['api_key'] == $apikey) {
+		$post = lywoomo_init_post(get_post((int)$_GET['id']), true);
+	}
+
+	return array('data' => $post);
+}
+
+add_action('rest_api_init', function(){
 	register_rest_route( 'lywoomo/v1', '/posts/search', array(
 		'methods' => 'POST',
 		'callback' => 'lywoomo_search_posts',
@@ -86,11 +104,12 @@ function lywoomo_search_posts() {
 	return array('data' => $posts);
 }
 
-function lywoomo_init_post($post) {
+function lywoomo_init_post($post, $all_content=false) {
 
 	$item['ID'] = (int)$post->ID;
 	$item['post_date_gmt'] = $post->post_date_gmt;
-	$item['post_content'] = substr(strip_tags($post->post_content), 0, 100);
+	$item['post_content'] = ($all_content)? $post->post_content:
+		substr(strip_tags($post->post_content), 0, 100);
 	$item['post_title'] = $post->post_title;
 	$item['permalink'] = get_permalink($post->ID);
 	$item['thumbnail'] = wp_get_attachment_url( get_post_thumbnail_id($post->ID) );
