@@ -58,6 +58,28 @@ function lywoomo_get_post() {
 	return array('data' => $post);
 }
 
+//get post from url
+add_action('rest_api_init', function(){
+	register_rest_route( 'lywoomo/v1', '/post/url', array(
+		'methods' => 'POST',
+		'callback' => 'lywoomo_get_url_post',
+	));
+});
+
+function lywoomo_get_url_post() {
+	$post = null;
+
+	$apikey = get_option('lywoomo_api_key');
+	if (isset($_POST['api_key']) && $_POST['api_key'] == $apikey) {
+		$result = url_to_postid($_POST['url']);
+		if ($result > 0) {
+			$post = lywoomo_init_post(get_post((int)$result), false);
+		}
+	}
+
+	return array('data' => $post);
+}
+
 add_action('rest_api_init', function(){
 	register_rest_route( 'lywoomo/v1', '/posts/search', array(
 		'methods' => 'POST',
