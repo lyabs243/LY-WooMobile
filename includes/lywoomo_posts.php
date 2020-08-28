@@ -158,10 +158,12 @@ function lywoomo_search_posts() {
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}posts
- 					WHERE LOWER(post_content) LIKE %s
+ 					WHERE (LOWER(post_content) LIKE %s
+ 					OR LOWER(post_title) LIKE %s)
  					AND post_type = 'post'
  					ORDER BY post_date_gmt DESC
  					LIMIT %d , %d",
+				"%$query%",
 				"%$query%",
 				$start,
 				$totalItems
