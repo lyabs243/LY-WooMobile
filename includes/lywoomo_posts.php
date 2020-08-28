@@ -6,6 +6,55 @@
  * Time: 13:26
  */
 
+//on adding post, send notification
+add_action( 'save_post', 'lywoomo_send_notification' );
+function lywoomo_send_notification($postId) {
+	$response = array();
+
+	if ($postId > 0) {
+		$post = get_post($postId);
+		//send notification only for post type and for newly post created
+		if ($post->post_type == 'post' && $post->post_date == $post->post_modified && $post->post_status == 'publish') {
+			$heading = substr($post->post_title, 0, 100);
+			$content = substr(strip_tags($post->post_content), 0, 250);
+			$thumbnail = wp_get_attachment_url(
+				get_post_thumbnail_id($post->ID)
+			);
+
+			$headings = array(
+				'en' => $heading,
+			);
+
+			$contents = array(
+				'en' => $content,
+			);
+
+			$data['post_id'] = "$postId";
+
+			$response = wp_remote_post(
+				'https://onesignal.com/api/v1/notifications', array(
+					'method'  => 'POST',
+					'headers' => array(
+						'Content-Type' => 'application/json; charset=utf-8',
+						'Authorization' => 'Basic ' . 'NGU1NzljM2MtOTU5NS00MGVjLWFkNTMtZDg1ZTBlNGMwMjhl'
+					),
+					'body'    => json_encode(array(
+						'app_id'            => 'b847ba3e-6c07-47a3-a14e-232382a6580a',
+						'included_segments' => array('All'),
+						'data'              => $data,
+						'headings'          => $headings,
+						'contents'          => $contents,
+						'big_picture'       => $thumbnail,
+						'ttl'               => 14 * 86400
+					)),
+				)
+			);
+		}
+
+	}
+	return $response;
+}
+
 add_action('rest_api_init', function(){
 	register_rest_route( 'lywoomo/v1', '/posts/', array(
 		'methods' => 'POST',
