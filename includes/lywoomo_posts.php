@@ -179,6 +179,8 @@ function lywoomo_init_post($post, $all_content=false) {
 
 	$item['ID'] = (int)$post->ID;
 	$item['post_date_gmt'] = $post->post_date_gmt;
+	$item['post_date'] = $post->post_date;
+	$item['post_date_timestamp'] = strtotime($post->post_date_gmt);
 	$item['post_content'] = ($all_content)? $post->post_content:
 		substr(strip_tags($post->post_content), 0, 100);
 	$item['post_title'] = $post->post_title;
