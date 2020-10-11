@@ -9,6 +9,9 @@
 //on adding post, send notification
 add_action( 'save_post', 'lywoomo_send_notification' );
 function lywoomo_send_notification($postId) {
+
+	$useFirebase = true;
+
 	$response = array();
 
 	if ($postId > 0) {
@@ -21,34 +24,63 @@ function lywoomo_send_notification($postId) {
 				get_post_thumbnail_id($post->ID)
 			);
 
-			$headings = array(
-				'en' => $heading,
-			);
+			if ($useFirebase) {
 
-			$contents = array(
-				'en' => $content,
-			);
-
-			$data['post_id'] = "$postId";
-
-			$response = wp_remote_post(
-				'https://onesignal.com/api/v1/notifications', array(
-					'method'  => 'POST',
-					'headers' => array(
-						'Content-Type' => 'application/json; charset=utf-8',
-						'Authorization' => 'Basic ' . 'NGU1NzljM2MtOTU5NS00MGVjLWFkNTMtZDg1ZTBlNGMwMjhl'
+				$body = array(
+					'notification' => array(
+						'body' => $content,
+						'title' => $heading,
+						'image' => $thumbnail
 					),
-					'body'    => json_encode(array(
-						'app_id'            => 'b847ba3e-6c07-47a3-a14e-232382a6580a',
-						'included_segments' => array('All'),
-						'data'              => $data,
-						'headings'          => $headings,
-						'contents'          => $contents,
-						'big_picture'       => $thumbnail,
-						'ttl'               => 14 * 86400
-					)),
-				)
-			);
+					'priority' => 'high',
+					'data' => array(
+						'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+						'post_id' => $postId
+					),
+					'to' => '/topics/woo-mobile'
+				);
+
+				$response = wp_remote_post(
+					'https://fcm.googleapis.com/fcm/send', array(
+						'method'  => 'POST',
+						'headers' => array(
+							'Content-Type' => 'application/json; charset=utf-8',
+							'Authorization' => 'key=AAAAC-VhBYE:APA91bFqs5a0Lo7rRIRCYsO-xrwsn0mhhBIdEwZWvgD2sROKhXY-SpKpRhvaIZsDAWtDwTsdQXah6DZGI3XNiAlOPfQF94EaFtK5yac08-chawff28ryWC-xcuhk_wFgM1JLebqy8gDW'
+						),
+						'body'    => json_encode($body),
+					)
+				);
+			}
+			else {
+				$headings = array(
+					'en' => $heading,
+				);
+	
+				$contents = array(
+					'en' => $content,
+				);
+	
+				$data['post_id'] = "$postId";
+	
+				$response = wp_remote_post(
+					'https://onesignal.com/api/v1/notifications', array(
+						'method'  => 'POST',
+						'headers' => array(
+							'Content-Type' => 'application/json; charset=utf-8',
+							'Authorization' => 'Basic ' . 'NGU1NzljM2MtOTU5NS00MGVjLWFkNTMtZDg1ZTBlNGMwMjhl'
+						),
+						'body'    => json_encode(array(
+							'app_id'            => 'b847ba3e-6c07-47a3-a14e-232382a6580a',
+							'included_segments' => array('All'),
+							'data'              => $data,
+							'headings'          => $headings,
+							'contents'          => $contents,
+							'big_picture'       => $thumbnail,
+							'ttl'               => 14 * 86400
+						)),
+					)
+				);
+			}
 		}
 
 	}
